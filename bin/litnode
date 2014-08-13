@@ -1,2 +1,30 @@
 #!/usr/bin/env bash -e
-grep "^    " $1 | node
+[ -n "$LITNODE_DEBUG" ] && set -x
+
+if [ $# -eq 0 ] || [ ! -f ${!#} ]; then
+  echo "Usage: litnode [-w] a-literate-js-script" 1>&2 && exit 1;
+fi
+
+function compile {
+  # we consider every line with four leading spaces as javascript code (aka markdown)
+  grep "^    " "$1" | node
+}
+
+function sha {
+  echo `ls -lR | md5`
+}
+old_sha=$(sha)
+
+if [ "-w" = "$1" ] || [ "--watch" = "$1" ]; then
+  trap exit SIGINT
+  while true; do
+    if [[ $(sha) != $old_sha ]]; then
+      clear
+      compile $2
+      old_sha=$(sha)
+    fi
+    sleep 1
+  done
+else
+  compile $1
+fi
