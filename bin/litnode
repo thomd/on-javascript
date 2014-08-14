@@ -1,4 +1,4 @@
-#!/usr/bin/env bash -e
+#!/usr/bin/env bash
 [ -n "$LITNODE_DEBUG" ] && set -x
 
 if [ $# -eq 0 ] || [ ! -f ${!#} ]; then
@@ -15,16 +15,22 @@ function sha {
 }
 old_sha=$(sha)
 
-if [ "-w" = "$1" ] || [ "--watch" = "$1" ]; then
-  trap exit SIGINT
+function watch {
   while true; do
     if [[ $(sha) != $old_sha ]]; then
       clear
-      compile $2
+      compile $1
       old_sha=$(sha)
     fi
     sleep 1
   done
+}
+
+if [ "-w" = "$1" ] || [ "--watch" = "$1" ]; then
+  trap exit SIGINT
+  clear
+  compile $2
+  watch $2
 else
   compile $1
 fi
