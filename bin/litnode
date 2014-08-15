@@ -2,12 +2,22 @@
 [ -n "$LITNODE_DEBUG" ] && set -x
 
 if [ $# -eq 0 ] || [ ! -f ${!#} ]; then
-  echo "Usage: litnode [-w] a-literate-js-script" 1>&2 && exit 1;
+  echo "Usage: litnode [--watch] [--engine] literate-js-script" 1>&2 && exit 1;
 fi
+
+TMPFILE=`mktemp /tmp/litnode.XXXXXX` || exit 1
+ENGINE='node'
 
 function compile {
   # we consider every line with four leading spaces as javascript code (aka markdown)
-  grep "^    " "$1" | node
+  echo -e "\033[1;30m $ENGINE engine:\033[0m\n"
+  if [ "node" = "$ENGINE" ]; then
+    grep "^    " "$FILE" | sed 's/^    //' > $TMPFILE
+    node $TMPFILE
+  else
+    grep "^    " "$FILE" | sed 's/^    //' | sed 's/console.log/print/g' > $TMPFILE
+    rhino -f $TMPFILE
+  fi
 }
 
 function sha {
@@ -19,18 +29,35 @@ function watch {
   while true; do
     if [[ $(sha) != $old_sha ]]; then
       clear
-      compile $1
+      compile
       old_sha=$(sha)
     fi
     sleep 1
   done
 }
 
-if [ "-w" = "$1" ] || [ "--watch" = "$1" ]; then
+while test $# -ne 0; do
+  arg=$1
+  shift
+  case $arg in
+    -w|--watch)
+      WATCH=true
+      ;;
+    -e|--engine)
+      ENGINE=$1
+      shift
+      ;;
+    *)
+      FILE=$arg
+      ;;
+  esac
+done
+
+if [ $WATCH ]; then
   trap exit SIGINT
   clear
-  compile $2
-  watch $2
+  compile
+  watch
 else
-  compile $1
+  compile
 fi
