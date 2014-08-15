@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-[ -n "$LITNODE_DEBUG" ] && set -x
+[ -n "$LITJS_DEBUG" ] && set -x
 
 if [ $# -eq 0 ] || [ ! -f ${!#} ]; then
-  echo "Usage: litnode [--watch] [--engine] literate-js-script" 1>&2 && exit 1;
+  echo "Usage: litjs [--watch] [--engine] literate-js-script" 1>&2 && exit 1;
 fi
 
-TMPFILE=`mktemp /tmp/litnode.XXXXXX` || exit 1
+TMPFILE=`mktemp /tmp/litjs.XXXXXX` || exit 1
 ENGINE='node'
 
 function compile {

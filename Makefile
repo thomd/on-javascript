@@ -3,9 +3,9 @@ BINDIR = ${DESTDIR}/bin
 
 install:
 	install -d ${BINDIR}
-	install -m 755 bin/litnode ${BINDIR}
+	install -m 755 bin/litjs ${BINDIR}
 
 uninstall:
-	rm -f ${BINDIR}/litnode
+	rm -f ${BINDIR}/litjs
 
 .PHONY: install uninstall
