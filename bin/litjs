@@ -8,25 +8,29 @@ fi
 ENGINE='node'
 TMPFILE=`mktemp /tmp/litjs.XXXXXX` || exit 1
 
-# monkey-patch javascript to append a counter on each console.log
-cat > $TMPFILE <<EOF
-console.log_ = console.log
-console.log = (function(){
-    var counter = 0
-    return function(){
-        arguments[0] = "\033[1;30m(" + (counter++) + ")\033[0m " + arguments[0]
-        console.log_.apply(this, arguments)
-    }
+function patch {
+  # monkey-patch javascript to append a counter on each console.log
+  cat > $1 <<EOF
+$2_ = $2
+$2 = (function(){
+  var counter = 1
+  return function(){
+      arguments[0] = "\033[1;30m(" + (counter++) + ")\033[0m " + arguments[0]
+      $2_.apply(this, arguments)
+  }
 })()
 EOF
+}
 
 function compile {
   # we consider every line with four leading spaces as javascript code (aka markdown)
   echo -e "\033[1;30m $ENGINE engine:\033[0m\n"
   if [ "node" = "$ENGINE" ]; then
+    patch $TMPFILE "console.log"
     grep "^    " "$FILE" | sed 's/^    //' >> $TMPFILE
     node $TMPFILE
   else
+    patch $TMPFILE "print"
     grep "^    " "$FILE" | sed 's/^    //' | sed 's/console.log/print/g' >> $TMPFILE
     rhino -f $TMPFILE
   fi
