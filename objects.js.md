@@ -1,6 +1,6 @@
 # Objects in Javascript
 
-useful object-oriented concepts:
+Useful object-oriented concepts:
 
 * encapsulation: distinguishing between internal complexity and external interface
 
@@ -16,30 +16,41 @@ Javascript allows two ways of creating objects:
     object.method = function(){
       console.log(this.property);
     }
-    object.method()                                                  // foo
+    object.method()                                                  // (1) foo
 
-When a function is called as a method, as in `object.method()`, the special variable `this` in its body will refer to 
-the calling object.
+When a function is called as a method, as in `object.method()`, the special variable `this` in its body will 
+refer to the calling object.
 
-With `call` (which is inherited from `Function`), you can write a method once and then inherit it in another object, 
-without having to rewrite the method for the new object:
+With `call` (which is inherited from `Function`), you can write a method once and then inherit it in another 
+object, without having to rewrite the method for the new object:
 
     var otherObject = {}
     otherObject.property = 'bar'
 
-    object.method.call(otherObject)                                  // bar
+    object.method.call(otherObject)                                  // (2) bar
 
-CAUTION: if you extract a new function from an object, then the object is
-lost, `this` will then refer to the global object:
+CAUTION: if you extract a new function from an object, then the object is lost, `this` will then refer to the
+new context, in this case the global object:
 
     var extractedFunction = object.method
-    extractedFunction()                                              // undefined
+    extractedFunction()                                              // (3) undefined
 
 In this case you need to create a new function bound to `object` using `Function.prototype.bind()`:
 
     var extractedFunction = object.method.bind(object)
-    extractedFunction()                                              // foo
+    extractedFunction()                                              // (4) foo
 
+Another pitfall is when using an objects method as a callback for an asynchronous function (like Timers, 
+DOM events or XHR requests). This case also requires to use a new callback function bound to the object:
+
+    var asyncMethod = function(callback){
+      callback()
+    }
+    object._method = function() {
+      asyncMethod(this.method)                                       // (5) undefined
+      asyncMethod(this.method.bind(object))                          // (6) foo
+    }
+    object._method()
 
 
 
@@ -75,8 +86,8 @@ In this case you need to create a new function bound to `object` using `Function
     var cheese = new Food('feta', 5);
     var fun = new Toy('robot', 40);
 
-    console.log(cheese.print())
-    console.log(fun.print())
+    console.log(cheese.print())                                      // (6) feta consts 5
+    console.log(fun.print())                                         // (7) robot consts 40
 
 
 
