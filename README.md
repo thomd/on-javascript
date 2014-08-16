@@ -1,18 +1,18 @@
 # On Javascript
 
-some personal notes about javascript using [literate javascript][1].
+Some personal notes about javascript using [literate javascript][1].
 
 ### Usage
 
-evaluate with [node][2]:
+Evaluate with [node][2]:
 
     litjs script.js.md
 
-evaluate with [rhino][3]:
+Evaluate with [rhino][3]:
 
     litjs -e rhino script.js.md
 
-use a file watcher with a `-w` option
+Use a file watcher with a `-w` option
 
 ### Install
 
