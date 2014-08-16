@@ -1,23 +1,25 @@
 # On Javascript
 
-## Usage
+some personal notes about javascript using [literate javascript][1].
 
-evaluate [literate javascript][1] using [node][2]:
+### Usage
+
+evaluate with [node][2]:
 
     litjs script.js.md
 
-evaluate literate javascript using [rhino][3]:
+evaluate with [rhino][3]:
 
     litjs -e rhino script.js.md
 
-use a watcher with a `-w` option
+use a file watcher with a `-w` option
 
-# Install
+### Install
 
     brew install node
     brew install rhino
 
-Install `lijs`:
+Install `litjs`:
 
     make
 
