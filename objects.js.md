@@ -28,6 +28,8 @@ Objects have __properties__. Properties which hold a function as value are calle
     }
     object.method()                                                  // (1) foo
 
+### What is `this` ?
+
 When a function is called as a method, as in `object.method()`, the special variable `this` in its body is a 
 reference to the calling object, which can be used for the duration of that function's execution. This process
 is called __Implicit Binding__.
@@ -41,18 +43,29 @@ This process is called __Explicit Binding__.
 
     object.method.call(otherObject)                                  // (2) bar
 
+If you pass primitives to `call`, then they will be wrapped in its object form (often called "boxing"):
+
+    name = new String("alice")
+    name.out = function(){
+      console.log(this)
+    }
+    name.out()                                                       // (3) alice
+    name.out.call("bob")                                             // (4) bob
+
+Binding of `this` happens on runtime, not at author-time. It is only contextual based on the
+conditions of the function's invocation, not on where a function is declared.
+
 __CAUTION__: if you extract a new function from an object, then the object is lost, `this` will then refer to
 the new context, in this case the global object:
 
     extractedFunction = object.method                                // is now a reference / alias
+    extractedFunction()                                              // (5) undefined
 
-    extractedFunction()                                              // (3) undefined
-
-In this case you need to create a new function bound to `object` using `Function.prototype.bind()`:
+In this case you need to create a new function bound to `object` using `Function.prototype.bind()`. This
+process is called __Hard Binding__.
 
     extractedFunction = object.method.bind(object)
-
-    extractedFunction()                                              // (4) foo
+    extractedFunction()                                              // (6) foo
 
 Another pitfall is when using an objects method as a callback. Callbacks are often used with asynchronous 
 function (like Timers, DOM events or XHR requests). This case also requires to use a new callback function 
@@ -62,11 +75,11 @@ bound to the object using `bind`:
       callback()
     }
     object._method = function() {
-      asyncMethod(this.method)                                       // (5) undefined
-      asyncMethod(this.method.bind(object))                          // (6) foo
+      asyncMethod(this.method)                                       // (7) undefined
+      asyncMethod(this.method.bind(object))                          // (8) foo
     }
-
     object._method()
+
 
 ## Prototype
 
@@ -75,7 +88,7 @@ A prototype is another object that is used as a fallback source of properties.
 
 To get the prototype of an object, use `Object.getPrototypeOf()`:
 
-    console.log(Object.getPrototypeOf(object) == Object.prototype)       // (7) true
+    console.log(Object.getPrototypeOf(object) == Object.prototype)       // (9) true
 
 When an object gets a request for a property that it does not have, its prototype will be searched for the 
 property, then the prototypes prototype, and so on.
@@ -112,8 +125,8 @@ property, then the prototypes prototype, and so on.
     var cheese = new Food('feta', 5);
     var fun = new Toy('robot', 40);
 
-    console.log(cheese.print())                                      // (6) feta consts 5
-    console.log(fun.print())                                         // (7) robot consts 40
+    console.log(cheese.print())                                      // (10) feta consts 5
+    console.log(fun.print())                                         // (11) robot consts 40
 
 
 
