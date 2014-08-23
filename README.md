@@ -1,10 +1,10 @@
 # On Javascript
 
+![javascript](//raw.githubusercontent.com/thomd/on-javascript/images/js.png)
+
 Some personal notes about javascript using [literate javascript][1].
 
-<img src="https://raw.githubusercontent.com/thomd/on-javascript/images/js.png">
-
-1. [on Objects](objects.js.m)
+1. [on Objects](objects.js.md)
 2. [on Functions](functions.js.md)
 
 ### Usage
