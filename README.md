@@ -1,6 +1,6 @@
 # On Javascript
 
-![javascript](https://raw.githubusercontent.com/thomd/on-javascript/images/js.png)
+<img src="//raw.githubusercontent.com/thomd/on-javascript/images/js.png">
 
 Some personal notes about javascript using [literate javascript][1].
 
