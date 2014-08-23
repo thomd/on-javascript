@@ -2,7 +2,7 @@
 
 Some personal notes about javascript using [literate javascript][1].
 
-![JavaScript](https://raw.githubusercontent.com/thomd/on-javascript/images/js.svg)
+<img src="https://raw.githubusercontent.com/thomd/on-javascript/images/js.png">
 
 1. [on Objects](objects.js.m)
 2. [on Functions](functions.js.md)
