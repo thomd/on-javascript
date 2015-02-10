@@ -129,4 +129,23 @@ property, then the prototypes prototype, and so on.
     console.log(fun.print())                                         // (11) robot consts 40
 
 
+Prototypal inheritance: objects inherit from objects
 
+Take an old object as a parameter and returns an empty new object that inherits from the old one.
+If we attempt to obtain a member from the new object, and it lacks that key, then the old object will supply the member.
+
+So instead of creating classes, you make prototype objects, and then use the object function to make new instances.
+Objects are mutable in JavaScript, so we can augment the new instances, giving them new fields and methods. These can then act as prototypes for even newer objects.
+We don't need classes to make lots of similar objects.
+
+### Object.prototype.create Polyfill
+
+There is a drawback of this function: ES5 supports Object.create natively but with arity 2
+
+    if (typeof Object.create != "function") {
+      Object.create = function(obj) {
+        function F(){}
+        F.prototype = obj;
+        return new F();
+      }
+    }
