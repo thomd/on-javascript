@@ -2,7 +2,7 @@
 [ -n "$LITJS_DEBUG" ] && set -x
 
 if [ $# -eq 0 ] || [ ! -f ${!#} ]; then
-  echo "Usage: litjs [--watch] [--engine] literate-js-script" 1>&2 && exit 1;
+  echo "Usage: litjs [--watch] [--engine=node|node:harmony|rhino] literate-js-script" 1>&2 && exit 1;
 fi
 
 ENGINE='node'
@@ -29,6 +29,10 @@ function compile {
     patch $TMPFILE "console.log"
     grep "^    " "$FILE" | sed 's/^    //' >> $TMPFILE
     node $TMPFILE
+  elif [ "node:harmony" = "$ENGINE" ]; then
+    patch $TMPFILE "console.log"
+    grep "^    " "$FILE" | sed 's/^    //' >> $TMPFILE
+    node --harmony $TMPFILE
   else
     patch $TMPFILE "print"
     grep "^    " "$FILE" | sed 's/^    //' | sed 's/console.log/print/g' >> $TMPFILE
