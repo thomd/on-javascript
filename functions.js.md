@@ -14,16 +14,16 @@ Naming convention: uppercase
 
 Every function has - among others - an implicit property `prototype`.
 
-    +---------------------------------------------------------------------------------------+
-    |                                                                                       |
-    +--> function Foo(){}                    +-------> Foo.prototype = new Object()         |
-        +-------------------+---------+      |        +--------------+---------+            |
-        | name              | Foo     |      |        | constructor  |         |------------+
-        +-------------------+---------+      |        +--------------+---------+
-        | length            | 0       |      |
-        +-------------------+---------+      |
-        | prototype         |         |------+
-        +-------------------+---------+
+    //    +-----------------------------------------------------------------------------------+
+    //    |                                                                                   |
+    //    +--> function Foo(){}                    +-------> Foo.prototype = new Object()     |
+    //        +-------------------+---------+      |        +--------------+---------+        |
+    //        | name              | Foo     |      |        | constructor  |         |--------+
+    //        +-------------------+---------+      |        +--------------+---------+
+    //        | length            | 0       |      |
+    //        +-------------------+---------+      |
+    //        | prototype         |         |------+
+    //        +-------------------+---------+
 
 
 
@@ -35,8 +35,8 @@ Every function has - among others - an implicit property `prototype`.
 
 ### console.log wrapper as an example
 
-    window.log = function(){
-      console.log.apply(console, Array.prototype.slice.call(arguments));
+    log = function() {
+       console.log.apply(console, Array.prototype.slice.call(arguments));
     }
 
 ## CLosures 
