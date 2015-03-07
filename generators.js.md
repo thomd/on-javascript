@@ -25,8 +25,19 @@ Generators are functions which can be stopped while in process and run later as 
 
 Calling `next` of the generator `G` starts execution, then pauses at the `yield` expression and returns the
 yield value and the state. Calling `next` again continues execution until the next `yield` statement.
-The `next` method returns an object `{value: VALUE_FROM_YIELD, done: IS_THIS_FINISHED}` (Nodejs) or 
-`VALUE_FROM_YIELD` (Rhino).
+The `next` method returns an iterator object `{value: VALUE_FROM_YIELD, done: IS_THIS_FINISHED}` (Nodejs
+[iterator protocol][3]) or just `VALUE_FROM_YIELD` (Rhino).
+
+## the for...of Statement
+
+The `for...of` statement allows to look over iterable objects. While `for...in` iterates over __property names__,
+`for...of` iterates over __property values__.
+
+The `for...of` statement is __not__ supported in Rhino.
+
+    for(f of foo()) {
+      console.log(f);                               // (4) foo, (5) undefined
+    }
 
 ## Examples
 
@@ -43,8 +54,9 @@ The `next` method returns an object `{value: VALUE_FROM_YIELD, done: IS_THIS_FIN
     }
     for(n of fibonacci()) {
       if(n > 10) break;
-      console.log(n);                                 // (4) 1, ..., (9) 8
+      console.log(n);                                 // (6) 1, ..., (11) 8
     }
 
 [1]: http://nodejs.org
 [2]: https://developer.mozilla.org/de/docs/Rhino
+[3]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols
