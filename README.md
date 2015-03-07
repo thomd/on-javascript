@@ -6,22 +6,28 @@ Some personal notes about javascript using [literate javascript][1].
 
 1. [on Objects](objects.js.md)
 2. [on Functions](functions.js.md)
+2. [on Generators](generators.js.md)
 
 ### Usage
 
-Evaluate with [node][2]:
+Evaluate with [iojs][4] or [nodejs][2]:
 
-    litjs script.js.md
+    litjs <script>.js.md
+    litjs -e node:harmony <script>.js.md
 
 Evaluate with [rhino][3]:
 
-    litjs -e rhino script.js.md
+    litjs -e rhino <script>.js.md
 
-Use a file watcher with a `-w` option
+Evaluate using a file watcher with the `-w` option
 
 ### Install
 
-    brew install node
+Install javascript environments:
+
+    brew install nvm
+    nvm install node
+    nvm install iojs
     brew install rhino
 
 Install `litjs`:
@@ -31,3 +37,4 @@ Install `litjs`:
 [1]: http://en.wikipedia.org/wiki/Literate_programming
 [2]: http://nodejs.org
 [3]: https://developer.mozilla.org/de/docs/Rhino
+[4]: https://iojs.org/en/index.html
