@@ -8,15 +8,18 @@ fi
 ENGINE='node'
 TMPFILE=`mktemp /tmp/litjs.XXXXXX` || exit 1
 
+# monkey-patch console.log() to prepend a counter on each log output
 function patch {
-  # monkey-patch javascript to append a counter on each console.log
   cat > $1 <<EOF
 $2_ = $2
-$2 = (function(){
+$2 = (function() {
   var counter = 1
-  return function(){
-      arguments[0] = "\033[1;30m(" + (counter++) + ")\033[0m " + arguments[0]
-      $2_.apply(this, arguments)
+  return function() {
+      var args = '';
+      for(var i=0; i < arguments.length; i++) {
+        args += 'arguments[' + i + '],';
+      }
+      eval('$2_.call(this, "\033[1;30m(" + (counter++) + ")\033[0m ", ' + args.replace(/,$/, '') + ')');
   }
 })()
 EOF
