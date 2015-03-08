@@ -28,18 +28,18 @@ EOF
 function compile {
   # we consider every line with four leading spaces as javascript code (aka markdown)
   echo -e "\033[1;30m $ENGINE engine:\033[0m\n"
-  if [ "node" = "$ENGINE" ]; then
-    patch $TMPFILE "console.log"
-    grep "^    " "$FILE" | sed 's/^    //' >> $TMPFILE
-    node $TMPFILE
-  elif [ "node:harmony" = "$ENGINE" ]; then
-    patch $TMPFILE "console.log"
-    grep "^    " "$FILE" | sed 's/^    //' >> $TMPFILE
-    node --harmony $TMPFILE
-  else
+  if [ "rhino" = "$ENGINE" ]; then
     patch $TMPFILE "print"
-    grep "^    " "$FILE" | sed 's/^    //' | sed 's/console.log/print/g' >> $TMPFILE
+    grep "^    " "$FILE" | grep -v "\[\w*Error\]" | sed 's/^    //' | sed 's/console.log/print/g' >> $TMPFILE
     rhino -f $TMPFILE
+  else
+    patch $TMPFILE "console.log"
+    grep "^    " "$FILE" | grep -v "\[\w*Error\]" | sed 's/^    //' >> $TMPFILE
+    if [ "node:harmony" = "$ENGINE" ]; then
+      node --harmony $TMPFILE
+    else
+      node $TMPFILE
+    fi
   fi
 }
 
