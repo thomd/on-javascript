@@ -10,7 +10,7 @@ not matter exactly where.
 Likewise regular functions, generator functions can also be defined using `GeneratorFunction` constructors or a
 `function*` expression.
 
-    function* foo() {
+    function *foo() {
       var stop = yield 'foo';
       console.log(stop);                              // (2) baz-2
     }
@@ -28,6 +28,17 @@ yield value and the state. Calling `next` again continues execution until the ne
 The `next` method returns an iterator object `{value: VALUE_FROM_YIELD, done: IS_THIS_FINISHED}` (Nodejs
 [iterator protocol][3]) or just `VALUE_FROM_YIELD` (Rhino).
 
+### Notes
+
+The `yield` expression can only be __inside of a generator function__. Hence the following does not work, as
+`yield` is within a non-generator function:
+
+    function *bar() {
+      [1,2].forEach(function(i) {                     // non-generator function
+        yield i;                                      // [SyntaxError]
+      })
+    }
+
 ## The for...of Statement
 
 The `for...of` statement allows to loop over iterable objects. While `for...in` iterates over __property names__,
@@ -39,11 +50,34 @@ The `for...of` statement is __not__ supported in Rhino.
       console.log(f);                               // (4) foo, (5) undefined
     }
 
-## Examples
+## Delegating Generators
+
+A `yield *` expression allows to delegate iteration control from one generator to another one. 
+
+The `yield *` expression can `yield` iterables (arrays, strings, ...) and generator objects. `yield *` is 
+an __expression__, __not a statement__. It evaluates to a value.
+
+    function *g1() {
+      yield 1;
+      yield* g2();
+      yield* [3, 4];
+      yield* [].slice.apply(arguments);
+    }
+    function *g2() {
+      yield 2;
+    }
+
+    for(g of g1('foo', 5)){
+      console.log(g);                                 // (6) 1, (7) 2, (8) 3, (9) 4, (10) foo, (11) 5
+    }
+
+## Use Cases
+
+Generators primary use case is in representing lazy (possibly infinite) __sequences__.
 
 ### Fibonacci Sequence
 
-    function* fibonacci(limit) {
+    function *fibonacci(limit) {
       var n1 = n2 = 1;
       while(1) {
         var curr = n1;
@@ -54,8 +88,27 @@ The `for...of` statement is __not__ supported in Rhino.
       }
     }
     for(n of fibonacci(10)) {
-      console.log(n);                                 // (6) 1, ..., (11) 8
+      console.log(n);                                 // (12) 1, ..., (17) 8
     }
+
+### Range
+
+    function *range(max, step) {
+      var count = 0;
+      step = step || 1;
+      for (var i = 0; i < max; i += step) {
+        count++;
+        yield i;
+      }
+      return count;
+    }
+
+    var gen = range(10, 3), info;
+    while (!(info = gen.next()).done) {
+      console.log(info.value);                        // (18) 0, ..., (21) 9
+    }
+    console.log("steps taken: " + info.value);        // (22) steps taken: 4
+
 
 [1]: http://nodejs.org
 [2]: https://developer.mozilla.org/de/docs/Rhino
