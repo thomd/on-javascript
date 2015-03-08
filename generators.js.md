@@ -43,17 +43,17 @@ The `for...of` statement is __not__ supported in Rhino.
 
 ### Fibonacci Sequence
 
-    function* fibonacci() {
+    function* fibonacci(limit) {
       var n1 = n2 = 1;
       while(1) {
         var curr = n1;
         n1 = n2;
         n2 = n1 + curr;
+        if(limit && curr > limit) return;
         yield curr;
       }
     }
-    for(n of fibonacci()) {
-      if(n > 10) break;
+    for(n of fibonacci(10)) {
       console.log(n);                                 // (6) 1, ..., (11) 8
     }
 
