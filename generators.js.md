@@ -28,9 +28,9 @@ yield value and the state. Calling `next` again continues execution until the ne
 The `next` method returns an iterator object `{value: VALUE_FROM_YIELD, done: IS_THIS_FINISHED}` (Nodejs
 [iterator protocol][3]) or just `VALUE_FROM_YIELD` (Rhino).
 
-## the for...of Statement
+## The for...of Statement
 
-The `for...of` statement allows to look over iterable objects. While `for...in` iterates over __property names__,
+The `for...of` statement allows to loop over iterable objects. While `for...in` iterates over __property names__,
 `for...of` iterates over __property values__.
 
 The `for...of` statement is __not__ supported in Rhino.
