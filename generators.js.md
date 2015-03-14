@@ -73,9 +73,13 @@ an __expression__, __not a statement__. It evaluates to a value.
 
 ## Use Cases
 
+### Lazy evaluation
+
+### (Infinite) Sequences
+
 Generators primary use case is in representing lazy (possibly infinite) __sequences__.
 
-### Fibonacci Sequence
+#### Fibonacci Sequence
 
     function *fibonacci(limit) {
       var n1 = n2 = 1;
@@ -91,7 +95,7 @@ Generators primary use case is in representing lazy (possibly infinite) __sequen
       console.log(n);                                 // (12) 1, ..., (17) 8
     }
 
-### Range
+#### Range
 
     function *range(max, step) {
       var count = 0;
@@ -108,6 +112,47 @@ Generators primary use case is in representing lazy (possibly infinite) __sequen
       console.log(info.value);                        // (18) 0, ..., (21) 9
     }
     console.log("steps taken: " + info.value);        // (22) steps taken: 4
+
+### Asynchronous flow control
+
+Generators can also be used to prevent callbacks.
+
+http://www.sitepoint.com/javascript-generators-preventing-callback-hell/
+
+    var fs = require('fs')
+
+    function thunkify (fn) {
+      return function () {
+        var args = Array.prototype.slice.call(arguments)
+        return function (cb) {
+          fn.apply(this, args.concat(cb))
+        }
+      }
+    }
+
+    function run(genFn) {
+      var gen = genFn()
+
+      next()
+      function next (er, value) {
+        if (er) return gen.throw(er) // throw error back to genFn if error
+
+        var continuable = gen.next(value) // send async return value back to genFn, get gen state
+        if (continuable.done) return // genFn has returned and we are done
+
+        var cbFn = continuable.value
+        cbFn(next)
+      }
+    }
+
+    var readFile = thunkify(fs.readFile)
+
+    run(function* () {
+      var file1 = yield readFile('./file1.txt')
+      var file2 = yield readFile('./file2.txt')
+      console.log(file1.toString())
+      console.log(file2.toString())
+    })
 
 
 [1]: http://nodejs.org
