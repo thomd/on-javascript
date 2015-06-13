@@ -11,9 +11,9 @@ Object properties which hold a function as value are called methods:
     }
     object.method()                                                  // (1) foo
 
-When a function is called as a method, as in `object.method()`, the special variable `this` in its body is a 
-reference to the calling object, which can be used for the duration of that function's execution. This process
-is called __Implicit Binding__.
+When a function is called as a method, as in `object.method()`, then `object` is the __receiver__ of the method call and 
+is accessible via `this` inside the method. The special variable `this` is a reference to the calling object, which 
+can be used for the duration of that function's execution. This process is called __Implicit Binding__.
 
 With `call` or `apply` (which is inherited from `Function`), you can force `this` to be another object. This allows to
 write a method once and then inherit it in another object, without having to rewrite the method for the new object. 
