@@ -4,12 +4,12 @@
 
 `this` is a binding for each function invocation based on it's __call-site__. 
 
-    object = {}
+    var object = {}
     object.property = 'foo'
     object.method = function() {
-      console.log(this.property)                                // `this` is the calling object `object`
+      console.log(this.property)                                     // `this` is the calling object `object`
     }
-    object.method()                                             // (1) foo
+    object.method()                                                  // (1) foo
 
 ### Implicit Binding
 
@@ -20,19 +20,19 @@ can be used for the duration of that function's execution. This process is calle
 __CAUTION__: be aware that the __call-site__ is what matters. If you have a reference (or alias), you will __lose that
 binding__. In this case you need to create a new function hard-bound to `object`:
 
-    object.method()                                             // (2) foo
+    object.method()                                                  // (2) foo
 
-    extreactedMethod = object.method
-    extreactedMethod()                                          // (3) undefined
+    var extreactedMethod = object.method
+    extreactedMethod()                                               // (3) undefined
 
-    extreactedMethod = object.method.bind(object)
-    extreactedMethod()                                          // (4) foo
+    var extreactedMethod = object.method.bind(object)
+    extreactedMethod()                                               // (4) foo
 
 ### Default Binding
 
 If no calling object is given, as in `method()`, then `this` is a reference to the global object. This is
 called the __Default Binding__. Be aware that the global object is only eligible for the default binding, when
-the contents of `method` are not running in __strict mode__.
+the contents of `method` are __not__ running in __strict mode__.
 
 ### Explicit Binding
 
@@ -40,19 +40,19 @@ With `call` or `apply` (which is inherited from `Function` prototype), you can f
 write a method once and then inherit it in another object, without having to rewrite the method for the new object. 
 This process is called __Explicit Binding__.
 
-    otherObject = {}
+    var otherObject = {}
     otherObject.property = 'bar'
 
-    object.method.call(otherObject)                                  // (2) bar
+    object.method.call(otherObject)                                  // (5) bar
 
 If you pass primitives to `call`, then they will be wrapped in its object form (often called _boxing_):
 
-    name = new String("alice")
+    var name = new String("alice")
     name.out = function(){
       console.log(this)
     }
-    name.out()                                                       // (3) alice
-    name.out.call("bob")                                             // (4) bob
+    name.out()                                                       // (6) alice
+    name.out.call("bob")                                             // (7) bob
 
 Binding of `this` happens on runtime, not at author-time. It is only contextual based on the
 conditions of the function's invocation, not on where a function is declared.
@@ -64,14 +64,8 @@ request) or as a reference/alias, then you will lose the implicit binding.
 
 To circumvent this, use a new callback function bound to the object using `bind`:
 
-    asyncMethod = function(callback) {
-      callback()
-    }
-    object.method = function() {
-      asyncMethod(this.method)                                       // (7) undefined
-      asyncMethod(this.method.bind(object))                          // (8) foo
-    }
-    object.method()
+    setTimeout(object.method, 0)                                     // (8) undefined
+    setTimeout(object.method.bind(object), 0)                        // (9) foo
 
 # Scope vs Context
 
