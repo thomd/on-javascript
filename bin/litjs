@@ -2,7 +2,7 @@
 [ -n "$LITJS_DEBUG" ] && set -x
 
 if [ $# -eq 0 ] || [ ! -f ${!#} ]; then
-  echo "Usage: litjs [--watch] [--engine=node|node:harmony|rhino] literate-js-script" 1>&2 && exit 1;
+  echo "Usage: litjs [--watch] [--engine node|babel-node|rhino] literate-js-script" 1>&2 && exit 1;
 fi
 
 ENGINE='node'
@@ -19,7 +19,7 @@ $2 = (function() {
       for(var i=0; i < arguments.length; i++) {
         args += 'arguments[' + i + '],';
       }
-      eval('$2_.call(this, "\033[1;30m(" + (counter++) + ")\033[0m ", ' + args.replace(/,$/, '') + ')');
+      eval('$2_.call(this, "\x1b[1;30m(" + (counter++) + ")\x1b[0m ", ' + args.replace(/,$/, '') + ')');
   }
 })()
 EOF
@@ -35,8 +35,10 @@ function compile {
   else
     patch $TMPFILE "console.log"
     grep "^    " "$FILE" | grep -v "\[\w*Error\]" | sed 's/^    //' >> $TMPFILE
-    if [ "node:harmony" = "$ENGINE" ]; then
-      node --harmony $TMPFILE
+    if [ "babel" = "$ENGINE" ]; then
+      test ! -d node_modules && npm i babel-preset-es2015
+      test ! -d /tmp/node_modules && ln -s "$PWD/node_modules" /tmp/node_modules
+      babel-node --presets es2015 $TMPFILE
     else
       node $TMPFILE
     fi
